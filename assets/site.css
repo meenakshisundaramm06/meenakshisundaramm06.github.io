@@ -661,7 +661,7 @@ a {
 .tools p { color: var(--ink-2); font-size: 1rem; line-height: 1.55; max-inline-size: 56ch; }
 .tools a { font-weight: 500; justify-self: start; }
 
-/* Why Razorpay */
+/* What I'm looking for */
 .quiet {
   display: grid;
   gap: 1rem clamp(1.5rem, 1rem + 3vw, 4rem);
