@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Designer to production: my AI-native workflow | Meenakshi Sundaram</title>
+<meta name="description" content="I design for Appian Composer, an AI agent that builds enterprise apps. For ten months I’ve also shipped the code for my own designs. This page shows how.">
+<meta name="color-scheme" content="light">
+<meta name="theme-color" content="#f8f5ee">
+<link rel="canonical" href="https://meenakshisundaramm06.github.io/ai-native-workflow/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Meenakshi Sundaram">
+<meta property="og:title" content="Designer to production: my AI-native workflow | Meenakshi Sundaram">
+<meta property="og:description" content="I design for Appian Composer, an AI agent that builds enterprise apps. For ten months I’ve also shipped the code for my own designs. This page shows how.">
+<meta property="og:url" content="https://meenakshisundaramm06.github.io/ai-native-workflow/">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%231A1A66'/%3E%3Cpath d='M8 23V9l8 9 8-9v14' fill='none' stroke='%23fff' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="preload" href="../fonts/SpaceGrotesk-Variable.ttf" as="font" type="font/ttf" crossorigin>
+<link rel="stylesheet" href="../assets/site.css">
+<script src="../assets/site.js"></script>
+</head>
+<body class="content-grid">
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="site-header full-width">
+  <div class="bar">
+    <a class="wordmark" href="../" aria-label="Meenakshi Sundaram, home">Meenakshi Sundaram</a>
+    <nav class="nav" aria-label="Primary">
+      <a href="../#work">Work</a>
+      <a href="../#sharing">Sharing</a>
+      <a href="../resume.pdf">Resume</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main" class="full-width">
+  <article class="case">
+
+    <nav class="crumb" aria-label="Breadcrumb">
+      <ol>
+        <li><a href="../">Home</a></li>
+        <li aria-current="page">Designer to production</li>
+      </ol>
+    </nav>
+
+    <header class="case-head">
+      <p class="eyebrow label">Case study 01</p>
+      <h1>Designer to production: my AI-native workflow</h1>
+      <p class="case-summary">For ten months I’ve also shipped the code for my own designs. This page shows how.</p>
+      <p class="context"><a href="https://docs.appian.com/suite/help/26.9/whats-new-composer.html" rel="noopener">Appian Composer</a> is Appian’s AI agent for building enterprise apps. It turns requirements and documents into a visual app plan, then generates records, process models and interfaces with AI.</p>
+
+      <dl class="meta">
+        <div><dt class="label">Role</dt><dd>UX designer who ships code</dd></div>
+        <div><dt class="label">Scope</dt><dd>40 merged PRs across 3 codebases</dd></div>
+        <div><dt class="label">Timeline</dt><dd>10 months</dd></div>
+        <div><dt class="label">Built with</dt><dd>AI coding tools and a skill library I curate</dd></div>
+      </dl>
+
+      <aside class="tldr" aria-labelledby="tldr-title">
+        <p class="label" id="tldr-title">TL;DR</p>
+        <ul>
+          <li>If I hand over working code, nobody has to rebuild my intent.</li>
+          <li>If a reviewer can open a link, nobody has to pull code to see it.</li>
+          <li>40 merged PRs in 10 months, across 3 codebases, built with AI coding tools.</li>
+        </ul>
+      </aside>
+    </header>
+
+    <div class="case-layout">
+
+      <nav class="toc" aria-label="On this page">
+        <p class="label">On this page</p>
+        <ol>
+          <li><a href="#friction"><span>01</span><span>The friction</span></a></li>
+          <li><a href="#workflow"><span>02</span><span>The workflow</span></a></li>
+          <li><a href="#end-to-end"><span>03</span><span>One change, end to end</span></a></li>
+          <li><a href="#tools"><span>04</span><span>Tools I built from friction</span></a></li>
+          <li><a href="#evidence"><span>05</span><span>The evidence</span></a></li>
+          <li><a href="#skills"><span>06</span><span>The skill library</span></a></li>
+          <li><a href="#scaling"><span>07</span><span>What I’d do first</span></a></li>
+        </ol>
+      </nav>
+
+      <div class="prose">
+
+        <section id="friction" aria-labelledby="friction-title">
+          <h2 id="friction-title" class="reveal"><span class="sec-num label">01</span>The friction</h2>
+          <p>Handoff loses things. A designer writes a spec, and engineers rebuild it from scratch. Details drop on the way, because a spec can’t carry every state and every interaction.</p>
+          <p>Review has a similar gap. A reviewer who needs to see a UI change has to pull the code and run it. Until then, the change is only code on a page.</p>
+        </section>
+
+        <section id="workflow" aria-labelledby="workflow-title">
+          <h2 id="workflow-title" class="reveal"><span class="sec-num label">02</span>The workflow</h2>
+          <p>Six steps. AI helps at each one.</p>
+
+          <ol class="steps">
+            <li><div><strong>Mock it in HTML.</strong> I ask AI for a working mock with real states and real clicks, so I find problems sooner. My prototype for <a href="../prompt-to-working-app/">From prompt to working app</a> started this way.</div></li>
+            <li><div><strong>Ask for variations.</strong> I get several versions of the same idea in one go. One version rarely shows me what the others would have.</div></li>
+            <li><div><strong>Compare them.</strong> I put them side by side and pick one, and I can say why. <a href="#fig-2">FIG-2</a> shows the idea with an invented empty state.</div></li>
+            <li><div><strong>Small change? Ship it.</strong> I write a production-ready merge request and send it. No spec, no handoff.</div></li>
+            <li><div><strong>Big change? Build a branch and a test site.</strong> I put every change on one branch, deploy a test site, and test with the real thing.</div></li>
+            <li><div><strong>Ship it with the team.</strong> Big changes become tickets, and I ship those tickets with the developers on my team. Or engineers take the branch. Ahead of Appian World 2026, Appian’s flagship event, I gave engineers a 125-file working handoff. It saved over a week of build time.</div></li>
+          </ol>
+
+          <!-- FIG-1 -->
+          <figure class="fig reveal" id="fig-1">
+            <div class="fig-card" role="img" aria-label="A flow of six steps. Mock, variations and compare lead to a fork: small changes go out as a merge request, big changes go to a branch and test site and then to tickets shipped with developers, or to engineers who take the branch. A band below marks the skill library.">
+              <div class="flow">
+                <div class="branch">
+                  <div class="trunk chain">
+                    <span class="node"><b>1</b> HTML mock</span><span class="link"></span>
+                    <span class="node"><b>2</b> Variations</span><span class="link"></span>
+                    <span class="node"><b>3</b> Compare</span>
+                  </div>
+                  <span class="join"></span><span class="fork-a"></span><span class="fork-b"></span>
+                  <div class="leaf-a">
+                    <p class="lane-title label">If it’s small</p>
+                    <div class="chain">
+                      <span class="node"><b>4</b> Small change</span><span class="link"></span>
+                      <span class="node">Merge request</span><span class="link"></span>
+                      <span class="node" data-tone="accent">Shipped</span>
+                    </div>
+                  </div>
+                  <div class="leaf-b">
+                    <p class="lane-title label">If it’s big</p>
+                    <div class="chain">
+                      <span class="node"><b>5</b> Big change</span><span class="link"></span>
+                      <span class="node">Branch + test site</span><span class="link"></span>
+                      <div class="branch is-inner">
+                        <span class="node trunk"><b>6</b> Ship it</span>
+                        <span class="join"></span><span class="fork-a"></span><span class="fork-b"></span>
+                        <span class="node leaf-a" data-tone="soft" data-wrap>Engineers take the branch</span>
+                        <span class="node leaf-b" data-tone="soft" data-wrap>Tickets I ship with developers</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="flow-band label">Skill library, used at every step</div>
+              </div>
+            </div>
+            <figcaption><span class="label">FIG-1</span><span>The workflow</span></figcaption>
+          </figure>
+
+          <!-- FIG-2 -->
+          <figure class="fig reveal" id="fig-2">
+            <div class="fig-card" role="img" aria-label="Three versions of an empty state for a report list, side by side. Variant B is outlined and tagged Chosen.">
+              <div class="variants">
+                <div class="variant">
+                  <div class="variant-head"><span class="label">Variant A</span></div>
+                  <div class="list-ghost">
+                    <svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h7l4 4v14H7z"/><path d="M14 3v4h4"/><path d="M10 13h5M10 17h5"/></svg>
+                    <p class="empty-title">No reports yet</p>
+                    <span class="ui-btn">Create report</span>
+                  </div>
+                </div>
+                <div class="variant" data-chosen>
+                  <div class="variant-head"><span class="label">Variant B</span><span class="chip" data-tone="accent">Chosen</span></div>
+                  <div class="list-ghost">
+                    <p class="empty-title">No reports yet</p>
+                    <p class="empty-text">Reports you create show up here.</p>
+                    <span class="ui-btn">Create report</span>
+                    <span class="ui-link">Import a file</span>
+                  </div>
+                </div>
+                <div class="variant">
+                  <div class="variant-head"><span class="label">Variant C</span></div>
+                  <div class="list-ghost is-hint">
+                    <p class="hint-row">Create your first report</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <figcaption><span class="label">FIG-2</span><span>Variations, side by side</span></figcaption>
+          </figure>
+
+          <!-- FIG-3 -->
+          <figure class="fig reveal" id="fig-3">
+            <div class="fig-card" role="img" aria-label="Two columns compare handoffs. The spec route goes from designer frames to a written spec to engineers rebuilding it, with details lost on the way; the last step is greyed. The branch route goes from mock to branch to test site to Shipped, which is filled and labelled Merged and shipped with the team.">
+              <div class="cmp-grid">
+                <div class="cmp-panel">
+                  <p class="label">Spec handoff</p>
+                  <div class="chain is-down">
+                    <span class="node">Designer frames</span>
+                    <span class="link"><span class="chip" data-tone="amber">details lost</span></span>
+                    <span class="node">Written spec</span>
+                    <span class="link"><span class="chip" data-tone="amber">details lost</span></span>
+                    <span class="node" data-tone="faded">Rebuilt by engineers</span>
+                  </div>
+                </div>
+                <div class="cmp-panel" data-good>
+                  <p class="label">Working branch</p>
+                  <div class="chain is-down">
+                    <span class="node">HTML mock</span>
+                    <span class="link"></span>
+                    <span class="node">Branch with working code</span>
+                    <span class="link"></span>
+                    <span class="node">Test site</span>
+                    <span class="link"></span>
+                    <span class="node" data-tone="accent" data-climax>Shipped</span>
+                    <span class="ship-note">Merged and shipped with the team</span>
+                  </div>
+                </div>
+              </div>
+              <p class="label cmp-foot">Spec: rebuilt, then reviewed. Branch: tested first, then shipped.</p>
+            </div>
+            <figcaption><span class="label">FIG-3</span><span>From spec to working branch</span></figcaption>
+          </figure>
+        </section>
+
+        <section id="end-to-end" aria-labelledby="end-to-end-title">
+          <h2 id="end-to-end-title" class="reveal"><span class="sec-num label">03</span>One change, end to end</h2>
+          <p>The change below is invented, so I can show every step. The steps are how I work on a real one. I write the code with AI coding tools.</p>
+          <p class="label">The prompt</p>
+          <p class="callout">“Add an empty state to the report list. Say what the list is for. Make ‘Create report’ the main action and ‘Import a file’ a second way in. Everything must work by keyboard.”</p>
+          <ol class="steps">
+            <li><div><strong>Three variants.</strong> I asked for three. They differed on one question: how much to tell someone who has never made a report. A used an icon and one button. B added a sentence and a second way in. C put a grey hint inside the list (<a href="#fig-2">FIG-2</a>).</div></li>
+            <li><div><strong>Why B won.</strong> B says what the list is for and gives two ways forward, create or import. A gives one way and no reason. C looks like a row of data, so people can miss the action.</div></li>
+            <li><div><strong>Review before merge.</strong> Engineers review every merge request, like any other code change.</div></li>
+          </ol>
+          <p>These checks are how I decide AI-written code is good enough to merge.</p>
+        </section>
+
+        <section id="tools" aria-labelledby="tools-title">
+          <h2 id="tools-title" class="reveal"><span class="sec-num label">04</span>Tools I built from friction</h2>
+          <p>Reviewers had to pull code to see a UI change. So I added a Storybook preview to every branch. Now a reviewer opens a link from the merge request and checks the UI. Nobody pulls code, so a UI change is judged as a screen.</p>
+
+          <!-- FIG-4 -->
+          <figure class="fig reveal" id="fig-4">
+            <div class="fig-card" role="group" aria-label="A merge request with a View preview button. An arrow leads to a browser frame that shows the running empty state.">
+              <div class="browser">
+                <div class="browser-bar">
+                  <span class="browser-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+                  <span class="addr">git.example/reports/merge_requests/12</span>
+                </div>
+                <div class="mr-body">
+                  <h3 class="mr-title">Add empty state to report list</h3>
+                  <div class="mr-meta">
+                    <span class="chip" data-tone="green">Open</span>
+                    <span class="chip" data-tone="mono">feature/empty-state</span>
+                  </div>
+                  <ul class="checks">
+                    <li><span class="check-label"><span class="dot" aria-hidden="true"></span>Build passed</span></li>
+                    <li class="check-details">
+                      <details open>
+                        <summary>
+                          <span class="check-label"><span class="dot" aria-hidden="true"></span>Storybook preview</span>
+                          <span class="ui-btn"><span class="when-closed">View preview</span><span class="when-open">Hide preview</span> <span aria-hidden="true">↗</span></span>
+                        </summary>
+                        <div class="preview">
+                          <div class="chain is-down" aria-hidden="true"><span class="link"></span></div>
+                          <div class="browser">
+                            <div class="browser-bar">
+                              <span class="browser-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+                              <span class="addr">preview.example/feature-empty-state</span>
+                            </div>
+                            <div class="preview-body">
+                              <div class="list-ghost">
+                                <p class="empty-title">No reports yet</p>
+                                <p class="empty-text">Reports you create show up here.</p>
+                                <span class="ui-btn">Create report</span>
+                                <span class="ui-link">Import a file</span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </details>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <figcaption><span class="label">FIG-4</span><span>A preview from a merge request. One click from review to the real UI.</span></figcaption>
+          </figure>
+        </section>
+
+        <section id="evidence" aria-labelledby="evidence-title">
+          <h2 id="evidence-title" class="reveal"><span class="sec-num label">05</span>The evidence</h2>
+          <p>40 merged PRs in 10 months, across 3 codebases, built with AI coding tools. Three you can see in the product:</p>
+          <ul>
+            <li>a task-plan approval view, where users approve what the agent plans to do,</li>
+            <li>an agent mode picker,</li>
+            <li>chat tables that keyboard and screen-reader users can scroll to every column.</li>
+          </ul>
+          <p>The third one matters most to me. A spec can easily leave out a detail like that. Working code has to handle it.</p>
+        </section>
+
+        <section id="skills" aria-labelledby="skills-title">
+          <h2 id="skills-title" class="reveal"><span class="sec-num label">06</span>The skill library</h2>
+          <p>I keep a library of skills and use them at every step. A few are my own. Most come from public sources, and credit goes to their authors. I choose them and chain them, so one step feeds the next. My contribution is the selection and the chaining, and using them on real work.</p>
+        </section>
+
+        <section id="scaling" aria-labelledby="scaling-title">
+          <h2 id="scaling-title" class="reveal"><span class="sec-num label">07</span>What I’d do first</h2>
+          <p>A plan for my first four weeks on a design team. I haven’t run it across a team yet.</p>
+          <ul>
+            <li><strong>Week 1.</strong> Survey designers for their worst handoff friction.</li>
+            <li><strong>Weeks 2–3.</strong> Turn the top step into one shared skill. Pair with three designers to ship a real change.</li>
+            <li><strong>Week 4.</strong> Write down the review gates: what a designer checks before a merge request, and what engineering checks after.</li>
+          </ul>
+          <p>Before that, I ran two knowledge-sharing sessions for my UX team in Jul–Aug 2026, each with its own site (<a href="../#sharing">on the home page</a>).</p>
+        </section>
+
+      </div>
+    </div>
+
+    <nav class="next-case reveal" aria-label="Next case">
+      <a href="../prompt-to-working-app/">
+        <span class="label">Next case</span>
+        <span class="next-title">From prompt to working app</span>
+        <span class="next-hook">I built a clickable prototype to compare three ways an AI agent can turn a plan into real app objects, and what each one costs.</span>
+        <span class="next-go" aria-hidden="true">→</span>
+      </a>
+    </nav>
+
+  </article>
+</main>
+
+<footer class="site-footer full-width">
+  <div class="bar">
+    <ul class="footer-links" aria-label="Links">
+      <li><a href="https://www.linkedin.com/in/meenakshisundarams/" rel="noopener">LinkedIn</a></li>
+      <li><a href="../resume.pdf">Resume</a></li>
+      <li><a href="https://github.com/meenakshisundaramm06" rel="noopener">GitHub</a></li>
+    </ul>
+    <p class="footer-name">Meenakshi Sundaram</p>
+  </div>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>From prompt to working app | Meenakshi Sundaram</title>
+<meta name="description" content="I built a clickable prototype to compare three ways an AI agent can turn a plan into real app objects.">
+<meta name="color-scheme" content="light">
+<meta name="theme-color" content="#f8f5ee">
+<link rel="canonical" href="https://meenakshisundaramm06.github.io/prompt-to-working-app/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Meenakshi Sundaram">
+<meta property="og:title" content="From prompt to working app | Meenakshi Sundaram">
+<meta property="og:description" content="I built a clickable prototype to compare three ways an AI agent can turn a plan into real app objects.">
+<meta property="og:url" content="https://meenakshisundaramm06.github.io/prompt-to-working-app/">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%231A1A66'/%3E%3Cpath d='M8 23V9l8 9 8-9v14' fill='none' stroke='%23fff' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="preload" href="../fonts/SpaceGrotesk-Variable.ttf" as="font" type="font/ttf" crossorigin>
+<link rel="stylesheet" href="../assets/site.css">
+<script src="../assets/site.js"></script>
+</head>
+<body class="content-grid">
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="site-header full-width">
+  <div class="bar">
+    <a class="wordmark" href="../" aria-label="Meenakshi Sundaram, home">Meenakshi Sundaram</a>
+    <nav class="nav" aria-label="Primary">
+      <a href="../#work">Work</a>
+      <a href="../#sharing">Sharing</a>
+      <a href="../resume.pdf">Resume</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main" class="full-width">
+  <article class="case">
+
+    <nav class="crumb" aria-label="Breadcrumb">
+      <ol>
+        <li><a href="../">Home</a></li>
+        <li aria-current="page">From prompt to working app</li>
+      </ol>
+    </nav>
+
+    <header class="case-head">
+      <p class="eyebrow label">Case study 02</p>
+      <h1>From prompt to working app</h1>
+      <p class="case-summary">I built a clickable prototype to compare three ways an AI agent can turn a plan into real app objects.</p>
+      <p class="context"><a href="https://docs.appian.com/suite/help/26.9/whats-new-composer.html" rel="noopener">Appian Composer</a> is Appian’s AI agent for building enterprise apps. It turns requirements and documents into a visual app plan, then generates records, process models and interfaces with AI.</p>
+
+      <aside class="tldr" aria-labelledby="tldr-title">
+        <p class="label" id="tldr-title">TL;DR</p>
+        <ul>
+          <li>One sentence becomes a plan, and a plan becomes objects. I compared three ways to do the second step.</li>
+          <li>Bulk generation stays available for speed. Its output is held inside one story, so the model stays whole.</li>
+          <li>I built the interactive prototype myself, to communicate a system decision to the team.</li>
+        </ul>
+      </aside>
+    </header>
+
+    <div class="case-layout">
+
+      <nav class="toc" aria-label="On this page">
+        <p class="label">On this page</p>
+        <ol>
+          <li><a href="#problem"><span>01</span><span>The problem</span></a></li>
+          <li><a href="#models"><span>02</span><span>Three execution models</span></a></li>
+          <li><a href="#hatch"><span>03</span><span>The bulk escape hatch</span></a></li>
+          <li><a href="#loop"><span>04</span><span>Old loop versus current flow</span></a></li>
+          <li><a href="#recommend"><span>05</span><span>What the prototype argued</span></a></li>
+          <li><a href="#role"><span>06</span><span>My role</span></a></li>
+          <li><a href="#outcome"><span>07</span><span>Outcome</span></a></li>
+          <li><a href="#learned"><span>08</span><span>What I learned</span></a></li>
+        </ol>
+      </nav>
+
+      <div class="prose">
+
+        <section id="problem" aria-labelledby="problem-title">
+          <h2 id="problem-title" class="reveal"><span class="sec-num label">01</span>The problem</h2>
+          <p>You type one sentence: “Build an expense management app.” The agent drafts a plan first.</p>
+          <p>The agent first drafts personas: Employee, Manager and Finance. It also drafts stories: submit an expense, review and approve, track team budget, export a monthly summary. Those produce artifacts: rough layouts, goals for each persona, workflows, business rules, a data model, and automation.</p>
+          <p>Then something has to turn all of that into real objects on the platform. That step decides how the product behaves after the first build. Each later edit has to reach the objects too, so the step runs again and again.</p>
+
+          <!-- FIG-11 -->
+          <figure class="fig reveal" id="fig-11">
+            <div class="fig-card" role="img" aria-label="A prompt for an expense app leads to three personas and four stories, which produce six kinds of planning artifacts.">
+              <div class="plan">
+                <p class="fig-title">One sentence in, six kinds of planning artifacts out</p>
+                <div class="prompt">
+                  <span class="prompt-field"><span class="label">You type</span><span class="prompt-text">Build an expense management app.</span></span>
+                  <span class="send"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg></span>
+                </div>
+                <span class="link" data-dir="down"></span>
+                <div class="plan-flow">
+                  <div class="panel">
+                    <p class="label">Personas</p>
+                    <div class="chips"><span class="node">Employee</span><span class="node">Manager</span><span class="node">Finance</span></div>
+                    <p class="label sub-label">Stories</p>
+                    <ol class="stories">
+                      <li><b>01</b>Submit an expense</li>
+                      <li><b>02</b>Review &amp; approve</li>
+                      <li><b>03</b>Track team budget</li>
+                      <li><b>04</b>Export monthly summary</li>
+                    </ol>
+                  </div>
+                  <span class="link" data-dir="down"></span>
+                  <span class="link" data-dir="right"></span>
+                  <div class="panel is-artifacts">
+                    <p class="label">Artifacts</p>
+                    <div class="artifacts">
+                      <div class="artifact"><span class="artifact-name">UI Preview</span><span class="artifact-sub">rough layouts</span></div>
+                      <div class="artifact"><span class="artifact-name">Goals</span><span class="artifact-sub">per persona</span></div>
+                      <div class="artifact"><span class="artifact-name">Workflows</span><span class="artifact-sub">submit → review → pay</span></div>
+                      <div class="artifact"><span class="artifact-name">Business Rules</span></div>
+                      <div class="artifact"><span class="artifact-name">Data Model</span><span class="artifact-sub">tables, fields, relationships</span></div>
+                      <div class="artifact"><span class="artifact-name">Automation</span><span class="artifact-sub">notifications, sync jobs</span></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <figcaption><span class="label">FIG-11</span><span>Scene 01, The Plan</span></figcaption>
+          </figure>
+        </section>
+
+        <section id="models" aria-labelledby="models-title">
+          <h2 id="models-title" class="reveal"><span class="sec-num label">02</span>Three execution models</h2>
+
+          <!-- FIG-12 -->
+          <figure class="fig reveal" id="fig-12">
+            <div class="fig-card" role="img" aria-label="Three cards compare how a plan becomes objects: old object-by-type, ideal story-by-story, and current story-based with one bulk story. Neither the old nor the ideal model works alone, so the current one sits in the middle.">
+              <div class="models">
+                <div class="panel model" data-model="old">
+                  <div class="model-head">
+                    <span class="chip" data-tone="mono">Old · How it started</span>
+                    <p class="model-title">Object-based</p>
+                  </div>
+                  <ul class="map model-vis">
+                    <li><span>personas</span><span class="link"></span><span class="chip" data-tone="mono">user groups</span></li>
+                    <li><span>UI preview</span><span class="link"></span><span class="chip" data-tone="mono">screens</span></li>
+                    <li><span>workflows</span><span class="link"></span><span class="chip" data-tone="mono">process flows</span></li>
+                    <li><span>rules</span><span class="link"></span><span class="chip" data-tone="mono">rule objects</span></li>
+                    <li><span>data model</span><span class="link"></span><span class="chip" data-tone="mono">data tables</span></li>
+                  </ul>
+                  <p class="label cmp-foot">Bulk. Stories have no say.</p>
+                </div>
+
+                <div class="panel model" data-model="ideal">
+                  <div class="model-head">
+                    <span class="chip" data-tone="mono">Ideal · Story-only</span>
+                    <p class="model-title">Story-based</p>
+                  </div>
+                  <div class="model-vis">
+                    <span class="node" data-tone="solid">Submit an expense</span>
+                    <div class="task-plan">
+                      <p class="label">Task plan</p>
+                      <ul>
+                        <li><span>Build the form</span><span class="chip" data-tone="mono">Screen</span></li>
+                        <li><span>Route for approval</span><span class="chip" data-tone="mono">Process flow</span></li>
+                        <li><span>Store the data</span><span class="chip" data-tone="mono">Data table</span></li>
+                      </ul>
+                    </div>
+                  </div>
+                  <p class="label cmp-foot">One story, one task plan. No bulk path.</p>
+                </div>
+
+                <p class="bridge">Neither works alone, so the current flow sits in between.</p>
+
+                <div class="panel model" data-model="current" data-good>
+                  <div class="model-head">
+                    <span class="chip" data-tone="accent">Current</span>
+                    <p class="model-title">Story-based, with a bulk escape hatch</p>
+                  </div>
+                  <div class="model-vis">
+                    <span class="node" data-tone="solid">Submit an expense</span>
+                    <div class="task-plan">
+                      <p class="label">Task plan</p>
+                      <ul>
+                        <li><span>Build the form</span><span class="chip" data-tone="mono">Screen</span></li>
+                        <li><span>Route for approval</span><span class="chip" data-tone="mono">Process flow</span></li>
+                        <li><span>Store the data</span><span class="chip" data-tone="mono">Data table</span></li>
+                      </ul>
+                    </div>
+                    <div class="bulk-story">
+                    <span class="chip" data-tone="accent">In progress</span>
+                      <span class="node" data-tone="dashed">Create foundational objects</span>
+                    </div>
+                  </div>
+                  <p class="label cmp-foot">Story-based by default. Bulk runs inside one story.</p>
+                </div>
+              </div>
+            </div>
+            <figcaption><span class="label">FIG-12</span><span>Three ways to turn the plan into objects</span></figcaption>
+          </figure>
+
+          <p><strong>Old: object-based.</strong> <span class="k">What:</span> generate by object type. Each artifact maps one to one to a platform object. A wizard lets you pick types and generate them in bulk. <span class="k">Why:</span> it is fast and simple to explain. <span class="k">Trade-off:</span> stories have no say, so the objects don’t trace back to what users asked for.</p>
+          <p><strong>Ideal: story-based.</strong> <span class="k">What:</span> every story plans and builds its own objects. One story gets one task plan, and each task is one object. <span class="k">Why:</span> work stays tied to the story it serves, so the app grows story by story. <span class="k">Trade-off:</span> there is no bulk path, so there is no quick way to lay the foundation.</p>
+          <p><strong>Current: story-based, with a bulk escape hatch.</strong> <span class="k">What:</span> story-based by default. When speed matters, bulk still runs, but its output sits inside one foundational story. <span class="k">Why:</span> people get speed when they need it, and the story model stays whole. <span class="k">Trade-off:</span> one story holds a batch of objects that don’t map to individual stories.</p>
+        </section>
+
+        <section id="hatch" aria-labelledby="hatch-title">
+          <h2 id="hatch-title" class="reveal"><span class="sec-num label">03</span>The bulk escape hatch</h2>
+          <p>I treat the hatch as a design trade-off. Bulk generation stays available for speed. Its output is held inside one story, so the model stays whole.</p>
+          <p>The user makes the choice at the start: build foundational objects in bulk, or build from scratch, story first. If they pick bulk, one card lands on the board, “Create foundational objects”, in In Progress. Every other card is a normal story.</p>
+
+          <!-- FIG-13 -->
+          <figure class="fig reveal" id="fig-13">
+            <div class="fig-card" role="img" aria-label="A start choice between bulk and story-first. Choosing bulk puts one card, Create foundational objects, in the In Progress column, beside normal story cards.">
+              <div class="start">
+                <div class="panel">
+                  <p class="label">How do you want to start?</p>
+                  <div class="radio-card" data-on><i class="rdot"></i><span>Build foundational objects in bulk</span></div>
+                  <div class="radio-card"><i class="rdot"></i><span>Build from scratch, story first</span></div>
+                </div>
+                <div class="panel">
+                  <div class="board">
+                    <div class="board-col">
+                      <p class="label">To do</p>
+                      <div class="kcard">Submit an expense</div>
+                      <div class="kcard">Review &amp; approve</div>
+                      <div class="kcard">Track team budget</div>
+                    </div>
+                    <div class="board-col">
+                      <p class="label">In progress</p>
+                      <div class="kcard" data-active>Create foundational objects</div>
+                    </div>
+                    <div class="board-col">
+                      <p class="label">Done</p>
+                      <div class="kcard" data-ghost></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <figcaption><span class="label">FIG-13</span><span>The start choice and the board</span></figcaption>
+          </figure>
+        </section>
+
+        <section id="loop" aria-labelledby="loop-title">
+          <h2 id="loop-title" class="reveal"><span class="sec-num label">04</span>Old loop versus current flow</h2>
+          <p>Continuous development is where the two models split. Story-based can include a bulk run at the start. After that, every later object arrives through a story.</p>
+          <p>In the old flow, Day 0 is a prompt, then artifacts that appear on their own, then a click to generate, then objects. After every edit the loop starts again: a new artifact, another click to generate, more objects. It repeats forever. The current flow starts building, makes stories, and makes task plans. Nothing repeats.</p>
+
+          <!-- FIG-14 -->
+          <figure class="fig reveal" id="fig-14">
+            <div class="fig-card">
+                <div class="lanes" role="img" aria-label="The old flow repeats generate-and-click after every edit. The current flow runs from start to stories to task plans once.">
+                  <div class="panel">
+                    <p class="label">Old</p>
+                    <div class="loop">
+                      <span class="node">Day 0 · Prompt</span><span class="link"></span>
+                      <span class="node">Artifacts (auto)</span><span class="link"></span>
+                      <span class="node">Generate (click)</span><span class="link"></span>
+                      <span class="node">Objects</span>
+                      <span class="turn"></span>
+                      <span class="node">+ Artifact</span><span class="link"></span>
+                      <span class="node">Generate (click again)</span><span class="link"></span>
+                      <span class="node">More objects</span><span class="link"></span>
+                      <span class="note">and repeats, forever</span>
+                    </div>
+                  </div>
+                  <div class="panel" data-good>
+                    <p class="label">Current</p>
+                    <div class="lane-flow">
+                      <span class="node">Start building</span><span class="link"></span>
+                      <span class="node">Stories</span><span class="link"></span>
+                      <span class="node" data-tone="accent">Task plans</span>
+                      <span class="note">Nothing repeats.</span>
+                    </div>
+                  </div>
+                </div>
+            </div>
+            <figcaption><span class="label">FIG-14</span><span>Old loop versus current flow</span></figcaption>
+          </figure>
+        </section>
+
+        <section id="recommend" aria-labelledby="recommend-title">
+          <h2 id="recommend-title" class="reveal"><span class="sec-num label">05</span>What the prototype argued</h2>
+          <p>The prototype argued for story-based by default, with bulk kept as one foundational story. It answered the main objection, speed: a story-first product has no quick way to lay the foundation of an app, and the bulk start gives one. Because the bulk output sits inside one story, every other object still traces back to a story. <a href="#fig-14">FIG-14</a> makes the other half of the argument: object-based generation runs again after every edit, and story-based does not.</p>
+        </section>
+
+        <section id="role" aria-labelledby="role-title">
+          <h2 id="role-title" class="reveal"><span class="sec-num label">06</span>My role</h2>
+          <p>I built the interactive prototype myself, in vanilla HTML, CSS and JS, using AI coding tools. I built it to communicate a system decision to the team. I wanted people to click through the argument and see the repeat for themselves.</p>
+          <p>The prototype runs in two scenes, with a pager at the bottom to move between them.</p>
+          <ul>
+            <li><strong>Scene 01, The Plan.</strong> You type the prompt and watch the agent draft personas, stories and artifacts. The same scene then shows the three execution models as cards, tagged Old, Ideal and Current. A line between them says neither model works alone.</li>
+            <li><strong>Scene 02, Old vs Current.</strong> It puts the two flows side by side and shows continuous development in each. A viewer compares them at a glance and sees the old loop repeat.</li>
+          </ul>
+          <p>FIG-11 to FIG-14 redraw its screens with invented data.</p>
+        </section>
+
+        <section id="outcome" aria-labelledby="outcome-title">
+          <h2 id="outcome-title" class="reveal"><span class="sec-num label">07</span>Outcome</h2>
+          <p>The prototype put the three trade-offs side by side, so the team could choose between them.</p>
+        </section>
+
+        <section id="learned" aria-labelledby="learned-title">
+          <h2 id="learned-title" class="reveal"><span class="sec-num label">08</span>What I learned</h2>
+          <p>Bulk is the fast start and story-first is the traceable one. The current flow pays for speed with one story that holds a batch of objects, so every other object still traces to a story.</p>
+        </section>
+
+      </div>
+    </div>
+
+    <nav class="next-case reveal" aria-label="Next case">
+      <a href="../undo-for-ai-agents/">
+        <span class="label">Next case</span>
+        <span class="next-title">Undo for AI agents</span>
+        <span class="next-hook">With manual save, the in-between AI edits can’t be restored. I tested autosave with users, got product and engineering to adopt it, then designed how an agent’s whole run is restored.</span>
+        <span class="next-go" aria-hidden="true">→</span>
+      </a>
+    </nav>
+
+  </article>
+</main>
+
+<footer class="site-footer full-width">
+  <div class="bar">
+    <ul class="footer-links" aria-label="Links">
+      <li><a href="https://www.linkedin.com/in/meenakshisundarams/" rel="noopener">LinkedIn</a></li>
+      <li><a href="../resume.pdf">Resume</a></li>
+      <li><a href="https://github.com/meenakshisundaramm06" rel="noopener">GitHub</a></li>
+    </ul>
+    <p class="footer-name">Meenakshi Sundaram</p>
+  </div>
+</footer>
+
+</body>
+</html>

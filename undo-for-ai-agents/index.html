@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Undo for AI agents | Meenakshi Sundaram</title>
+<meta name="description" content="I designed how Appian Composer, an AI agent that builds enterprise apps, saves and restores its edits.">
+<meta name="color-scheme" content="light">
+<meta name="theme-color" content="#f8f5ee">
+<link rel="canonical" href="https://meenakshisundaramm06.github.io/undo-for-ai-agents/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Meenakshi Sundaram">
+<meta property="og:title" content="Undo for AI agents | Meenakshi Sundaram">
+<meta property="og:description" content="I designed how Appian Composer, an AI agent that builds enterprise apps, saves and restores its edits.">
+<meta property="og:url" content="https://meenakshisundaramm06.github.io/undo-for-ai-agents/">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%231A1A66'/%3E%3Cpath d='M8 23V9l8 9 8-9v14' fill='none' stroke='%23fff' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="preload" href="../fonts/SpaceGrotesk-Variable.ttf" as="font" type="font/ttf" crossorigin>
+<link rel="stylesheet" href="../assets/site.css">
+<script src="../assets/site.js"></script>
+</head>
+<body class="content-grid">
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="site-header full-width">
+  <div class="bar">
+    <a class="wordmark" href="../" aria-label="Meenakshi Sundaram, home">Meenakshi Sundaram</a>
+    <nav class="nav" aria-label="Primary">
+      <a href="../#work">Work</a>
+      <a href="../#sharing">Sharing</a>
+      <a href="../resume.pdf">Resume</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main" class="full-width">
+  <article class="case">
+
+    <nav class="crumb" aria-label="Breadcrumb">
+      <ol>
+        <li><a href="../">Home</a></li>
+        <li aria-current="page">Undo for AI agents</li>
+      </ol>
+    </nav>
+
+    <header class="case-head">
+      <p class="eyebrow label">Case study 03</p>
+      <h1>Undo for AI agents</h1>
+      <p class="case-summary">I designed how an AI agent saves and restores its edits.</p>
+      <p class="context"><a href="https://docs.appian.com/suite/help/26.9/whats-new-composer.html" rel="noopener">Appian Composer</a> is Appian’s AI agent for building enterprise apps. It turns requirements and documents into a visual app plan, then generates records, process models and interfaces with AI.</p>
+
+      <dl class="meta">
+        <div><dt class="label">Role</dt><dd>UX designer: research, design, prototype</dd></div>
+        <div><dt class="label">Team</dt><dd>Product, engineering, me</dd></div>
+        <div><dt class="label">Timeline</dt><dd>Design work from Nov 2025. Shipped code for 10 months.</dd></div>
+        <div><dt class="label">Built with</dt><dd>Figma, and an HTML/CSS/JS prototype made with AI coding tools</dd></div>
+      </dl>
+
+      <aside class="tldr" aria-labelledby="tldr-title">
+        <p class="label" id="tldr-title">TL;DR</p>
+        <ul>
+          <li>With manual save, the in-between AI edits can’t be restored. I proposed one version per AI change, tested it, and product and engineering adopted it.</li>
+          <li>For requests that touch many objects, I designed checkpoint restore. I argued for keeping the conversation. The team shipped the simpler option.</li>
+          <li>I built the working AI assistant prototype for the test myself.</li>
+        </ul>
+      </aside>
+    </header>
+
+    <div class="case-layout">
+
+      <nav class="toc" aria-label="On this page">
+        <p class="label">On this page</p>
+        <ol>
+          <li>
+            <a href="#saving"><span>01</span><span>Saving AI edits</span></a>
+            <ol>
+              <li><a href="#problem"><span>The problem</span></a></li>
+              <li><a href="#why-unrestorable"><span>Why edits are unrestorable</span></a></li>
+              <li><a href="#proposal"><span>The proposal</span></a></li>
+              <li><a href="#objections"><span>Objections</span></a></li>
+              <li><a href="#test"><span>Usability test</span></a></li>
+              <li><a href="#alert"><span>From modal to alert</span></a></li>
+              <li><a href="#outcome"><span>Outcome</span></a></li>
+            </ol>
+          </li>
+          <li>
+            <a href="#restoring"><span>02</span><span>Restoring checkpoints</span></a>
+            <ol>
+              <li><a href="#many"><span>One object became many</span></a></li>
+              <li><a href="#dialog"><span>The restore dialog</span></a></li>
+              <li><a href="#options"><span>Four options</span></a></li>
+              <li><a href="#pick"><span>My pick: B</span></a></li>
+              <li><a href="#shipped"><span>What shipped: A</span></a></li>
+              <li><a href="#watch"><span>What I’d watch next</span></a></li>
+            </ol>
+          </li>
+          <li><a href="#learned"><span>03</span><span>What I learned</span></a></li>
+        </ol>
+      </nav>
+
+      <div class="prose">
+
+        <section id="saving" aria-labelledby="saving-title">
+          <h2 id="saving-title" class="reveal"><span class="sec-num label">01</span>Saving AI edits</h2>
+
+          <h3 id="problem">The problem</h3>
+          <p>Developers now ask an AI assistant to change their app. It edits fast. People need to see what changed and go back.</p>
+          <p>The platform’s habit is manual save. It keeps the version count low, simplifies debugging, and speeds up pair reviews. The open question was whether AI edits should follow it.</p>
+
+          <h3 id="why-unrestorable">Why manual save makes AI edits unrestorable</h3>
+          <p>Take this sequence: v1, change 1, change 2, v2, change 3, change 4, change 5.</p>
+          <p>Restore only reaches changes since the last saved version: changes 3 to 5, in a temporary buffer. When the user presses Save, the buffer collapses. Those three changes become one snapshot, and nobody can restore them one by one.</p>
+          <p>The user thinks they kept every AI edit. The system kept the last snapshot. It also breaks when the AI assistant touches a second object.</p>
+
+          <!-- FIG-5 -->
+          <figure class="fig reveal" id="fig-5">
+            <div class="fig-card">
+              <div role="img" aria-label="Two rows of version chips. Before Save, changes 3 to 5 are marked as the only restorable ones. After Save, they merge into a single version, v3.">
+                <div class="rail-row">
+                  <p class="label">Before Save</p>
+                  <div class="track" data-reserve>
+                    <div class="line">
+                      <span class="node" data-tone="solid">v1</span><span class="link"></span>
+                      <div class="seg">
+                        <span class="node" data-tone="dashed">change 1</span><span class="link"></span>
+                        <span class="node" data-tone="dashed">change 2</span>
+                        <span class="bracket"><span class="label">Not restorable as steps</span></span>
+                      </div>
+                    </div><span class="link"></span>
+                    <div class="line">
+                      <span class="node" data-tone="solid">v2</span><span class="link"></span>
+                      <div class="seg" data-tone="amber">
+                        <span class="node" data-tone="amber">change 3</span><span class="link"></span>
+                        <span class="node" data-tone="amber">change 4</span><span class="link"></span>
+                        <span class="node" data-tone="amber">change 5</span>
+                        <span class="bracket"><span class="label">Restorable: current session only</span></span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="rail-row">
+                  <p class="label">After Save</p>
+                  <div class="track">
+                    <div class="line">
+                      <span class="node" data-tone="solid">v1</span><span class="link"></span>
+                      <span class="node" data-tone="solid">v2</span><span class="link"></span>
+                      <span class="node" data-tone="solid">v3 <span class="chip">changes 3 to 5, merged</span></span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <p class="label cmp-foot">Changes 3, 4 and 5 can no longer be restored one by one.</p>
+            </div>
+            <figcaption><span class="label">FIG-5</span><span>Manual save keeps only the last snapshot</span></figcaption>
+          </figure>
+
+          <h3 id="proposal">The proposal</h3>
+          <p>Event-based autosave: every AI change creates a new version.</p>
+          <p>Two reasons:</p>
+          <ol class="steps">
+            <li><div><strong>Edits cross objects.</strong> You edit Interface A and ask the AI assistant to update the nested Interface B. The AI versions B, and A updates. No switching.</div></li>
+            <li><div><strong>Tasks span objects.</strong> Asked to “update these five rules, interfaces and expressions”, the AI must touch all of them. Autosave gives stable snapshots.</div></li>
+          </ol>
+          <p>I ruled out major and minor versions. They would change versioning for every developer.</p>
+
+          <!-- FIG-6 -->
+          <figure class="fig reveal" id="fig-6">
+            <div class="fig-card">
+              <div role="img" aria-label="Three rows compare version history. With manual save, in-between versions get deleted. In AI mode, every change is a version, labelled AI or You. Restoring v2 creates a new version, v7.">
+                <div class="rail-row">
+                  <p class="label">Manual save today</p>
+                  <div class="track" data-reserve>
+                    <div class="line">
+                      <div class="seg">
+                        <span class="node" data-tone="dashed" data-struck>v1</span><span class="link"></span>
+                        <span class="node" data-tone="dashed" data-struck>v2</span><span class="link"></span>
+                        <span class="node" data-tone="dashed" data-struck>v3</span><span class="link"></span>
+                        <span class="node" data-tone="dashed" data-struck>v4</span>
+                        <span class="bracket"><span class="label">Intermediate versions deleted</span></span>
+                      </div>
+                    </div><span class="link"></span>
+                    <div class="line">
+                      <span class="node" data-tone="solid">v5</span><span class="link"></span>
+                      <span class="node" data-tone="soft">Latest</span><span class="link"></span>
+                      <span class="node">Working copy</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="rail-row">
+                  <p class="label">AI mode</p>
+                  <div class="track">
+                    <div class="line">
+                      <span class="node" data-tone="solid">v1 <span class="chip" data-tone="mono">AI</span></span><span class="link"></span>
+                      <span class="node" data-tone="solid">v2 <span class="chip" data-tone="mono">AI</span></span><span class="link"></span>
+                      <span class="node" data-tone="solid">v3 <span class="chip" data-tone="mono">AI</span></span><span class="link"></span>
+                      <span class="node" data-tone="solid">v4 <span class="chip" data-tone="mono">AI</span></span>
+                    </div><span class="link"></span>
+                    <div class="line">
+                      <span class="node" data-tone="solid">v5 <span class="chip">You</span></span><span class="link"></span>
+                      <span class="node" data-tone="solid">v6 <span class="chip" data-tone="mono">AI</span></span><span class="link"></span>
+                      <span class="node">Working copy</span>
+                    </div>
+                  </div>
+                  <p class="rail-note">Manual edits still need a manual save.</p>
+                </div>
+                <div class="rail-row">
+                  <p class="label">Restore</p>
+                  <div class="track" data-drop>
+                    <div class="line">
+                      <span class="node" data-tone="solid">v1 <span class="chip" data-tone="mono">AI</span></span><span class="link"></span>
+                      <span class="anchor">
+                        <span class="node" data-tone="solid">v2 <span class="chip" data-tone="mono">AI</span></span>
+                        <span class="drop">
+                          <span class="link" data-dir="down"></span>
+                          <span class="drop-node">
+                            <span class="node" data-tone="accent">v7 · Restored v2</span>
+                            <span class="drop-note rail-note">Restoring makes a new version.</span>
+                          </span>
+                        </span>
+                      </span><span class="link"></span>
+                      <span class="node" data-tone="solid">v3 <span class="chip" data-tone="mono">AI</span></span><span class="link"></span>
+                      <span class="node" data-tone="solid">v4 <span class="chip" data-tone="mono">AI</span></span>
+                    </div><span class="link"></span>
+                    <div class="line">
+                      <span class="node" data-tone="solid">v5 <span class="chip">You</span></span><span class="link"></span>
+                      <span class="node" data-tone="solid">v6 <span class="chip" data-tone="mono">AI</span></span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <figcaption><span class="label">FIG-6</span><span>Three ways versions behave</span></figcaption>
+          </figure>
+
+          <h3 id="objections">Objections, and where I stand</h3>
+          <p><strong>Version spam.</strong> Manual save already makes many versions, so AI mode adds volume to a problem that already exists. Each version has a short description and an AI or You tag, so people can scan the list.</p>
+          <p><strong>Storage cost.</strong> Small on-premises customers may worry about paying for storage. That is the trade-off: more versions to keep, in return for every AI change being restorable.</p>
+
+          <h3 id="test">Usability test: four findings</h3>
+          <p>I built a working AI assistant prototype and tested it with developers.</p>
+          <ol class="steps">
+            <li><div><strong>Mixed save modes felt natural.</strong> I feared it would feel inconsistent with manual save elsewhere. The version number on the change summary card told developers the AI assistant made a new version.</div></li>
+            <li><div><strong>They understood the version flow.</strong> A v5 made in another mode meant the next AI change became v6. Restoring an old version made a new one, such as “v3 · Restored v1”.</div></li>
+            <li><div><strong>Authorship was clear.</strong> People told AI versions from their own. I worried the AI label would make people uneasy about the work. People responded well.</div></li>
+            <li><div><strong>Unsaved edits need a guard.</strong> If someone switches into AI mode with unsaved changes, an alert above the chat field says: save or reset first. If they ignore it, the AI builds on the unsaved state.</div></li>
+          </ol>
+
+          <!-- FIG-7 -->
+          <figure class="fig reveal" id="fig-7">
+            <div class="fig-card" role="img" aria-label="A chat panel shows three change cards, v1 to v3, each with a title and diff counts, next to a live preview of a case creation form.">
+              <div class="app" data-split>
+                <div class="chat">
+                  <div class="pane-head"><span class="label">AI assistant</span><span class="chip" data-tone="mono">AI mode</span></div>
+                  <p class="msg msg-user">Make a case creation form</p>
+                  <p class="msg msg-ai">Done. I created the form.</p>
+                  <div class="change">
+                    <div class="change-top"><span class="chip" data-tone="mono">v1</span><span class="change-title">Create case creation form</span></div>
+                    <div class="change-foot">
+                      <span class="diff"><span class="plus">+121</span><span class="minus">−0</span></span>
+                      <span class="change-actions">
+                        <span class="icon-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>Restore</span>
+                        <span class="icon-btn" data-quiet><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="19" cy="12" r="1.8"/></svg></span>
+                      </span>
+                    </div>
+                  </div>
+                  <p class="msg msg-user">Have priority as a radio button</p>
+                  <div class="change" data-active>
+                    <div class="change-top"><span class="chip" data-tone="mono">v2</span><span class="change-title">Change priority field to radio</span></div>
+                    <div class="change-foot">
+                      <span class="diff"><span class="plus">+1</span><span class="minus">−0</span></span>
+                      <span class="change-actions">
+                        <span class="icon-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>Restore</span>
+                        <span class="icon-btn" data-quiet><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="19" cy="12" r="1.8"/></svg></span>
+                      </span>
+                    </div>
+                  </div>
+                  <div class="change">
+                    <div class="change-top"><span class="chip" data-tone="mono">v3</span><span class="change-title">Restored v1</span></div>
+                    <div class="change-foot">
+                      <span class="diff"><span class="plus">+0</span><span class="minus">−1</span></span>
+                      <span class="change-actions">
+                        <span class="icon-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>Restore</span>
+                        <span class="icon-btn" data-quiet><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="19" cy="12" r="1.8"/></svg></span>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <div class="pv">
+                  <div class="pv-head"><span class="label">Preview</span><span class="chip" data-tone="mono">v2</span></div>
+                  <div class="form">
+                    <p class="form-title">Create case</p>
+                    <div class="field"><span class="field-label">Case title</span><span class="field-box">Enter a title</span></div>
+                    <div class="field"><span class="field-label">Case type</span><span class="field-box">Select a type<i class="caret"></i></span></div>
+                    <div class="field" data-changed>
+                      <span class="field-label">Priority</span>
+                      <span class="radios">
+                        <span class="radio"><i class="rdot"></i>Low</span>
+                        <span class="radio" data-on><i class="rdot"></i>Medium</span>
+                        <span class="radio"><i class="rdot"></i>High</span>
+                      </span>
+                    </div>
+                    <div class="field"><span class="field-label">Description</span><span class="field-box" data-area>Describe the case</span></div>
+                    <div class="form-pair">
+                      <div class="field"><span class="field-label">Assign to</span><span class="field-box">Select a person<i class="caret"></i></span></div>
+                      <div class="field"><span class="field-label">Due date</span><span class="field-box">dd / mm / yyyy</span></div>
+                    </div>
+                    <div class="form-actions"><span class="ui-btn">Create</span><span class="ui-btn is-ghost">Cancel</span></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <figcaption><span class="label">FIG-7</span><span>Change summary cards in the chat</span></figcaption>
+          </figure>
+
+          <!-- FIG-8 -->
+          <figure class="fig reveal" id="fig-8">
+            <div class="fig-card" data-stage role="img" aria-label="A slim amber alert above the chat input reads Unsaved changes, with Reset and Save buttons.">
+              <div class="app" data-single>
+                <div class="chat">
+                  <div class="pane-head"><span class="label">AI assistant</span><span class="chip" data-tone="mono">AI mode</span></div>
+                  <p class="msg msg-ai">Done. I created the form.</p>
+                  <div class="composer">
+                    <div class="alert">
+                      <span class="alert-text"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 2.5 20h19z"/><path d="M12 10v4M12 17.2v.1"/></svg>Unsaved changes</span>
+                      <span class="alert-actions"><span class="ui-btn is-ghost">Reset</span><span class="ui-btn">Save</span></span>
+                    </div>
+                    <div class="input"><span>Ask the AI assistant</span><span class="send"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg></span></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <figcaption><span class="label">FIG-8</span><span>Unsaved changes alert</span></figcaption>
+          </figure>
+
+          <h3 id="alert">From modal to alert</h3>
+          <p>My first guard was a modal. It added too much friction, so I moved to a lighter alert.</p>
+
+          <h3 id="outcome">Outcome</h3>
+          <p>I ran the study and persuaded product and engineering to adopt event-based autosave: every AI change creates a new version of the object.</p>
+        </section>
+
+        <section id="restoring" aria-labelledby="restoring-title">
+          <h2 id="restoring-title" class="reveal"><span class="sec-num label">02</span>Restoring checkpoints</h2>
+
+          <h3 id="many">One object became many</h3>
+          <p>Saving AI edits covered an AI assistant that edits one object. The agent can build or change many in one request. Each user turn adds a checkpoint to the chat, a divider with a Restore link.</p>
+          <p>That breaks the simple model. No stable version number spans many objects, so restore must undo a set of them together.</p>
+
+          <h3 id="dialog">The restore dialog</h3>
+          <p>Restore opens a dialog. It says restoring removes later changes and clears the conversation context. It lists each affected object with its diff, and warns that references elsewhere may need manual fixes.</p>
+
+          <!-- FIG-9 -->
+          <figure class="fig reveal" id="fig-9">
+            <div class="fig-card" role="img" aria-label="A dialog titled Restore Checkpoint warns about what restoring removes and lists six objects with their diffs, two marked Deleted, above Cancel and Restore buttons.">
+              <div class="backdrop">
+                <div class="dialog">
+                  <p class="dialog-title">Restore Checkpoint</p>
+                  <p class="dialog-text">Restoring to this checkpoint removes all changes made after this point and clears conversation context. The following changes show the resulting state. References to these objects elsewhere may require manual correction.</p>
+                  <ul class="diff-list">
+                    <li class="diff-row"><span>Loan Application</span><span class="diff"><span class="plus">+19</span><span class="minus">−3</span></span></li>
+                    <li class="diff-row"><span>Document record type</span><span class="diff"><span class="plus">+8</span><span class="minus">−1</span></span></li>
+                    <li class="diff-row"><span>Brand selector</span><span class="diff"><span class="plus">+12</span><span class="minus">−0</span></span></li>
+                    <li class="diff-row"><span>Application form</span><span class="diff"><span class="plus">+26</span><span class="minus">−2</span></span></li>
+                    <li class="diff-row"><span>Document upload</span><span class="diff"><span class="gone">Deleted</span></span></li>
+                    <li class="diff-row"><span>Submission workflow</span><span class="diff"><span class="gone">Deleted</span></span></li>
+                  </ul>
+                  <div class="dialog-actions"><span class="ui-btn is-ghost">Cancel</span><span class="ui-btn">Restore</span></div>
+                </div>
+              </div>
+            </div>
+            <figcaption><span class="label">FIG-9</span><span>Restore Checkpoint dialog</span></figcaption>
+          </figure>
+
+          <h3 id="options">Four options</h3>
+          <div class="table-wrap reveal">
+            <div class="scroll-x" role="group" aria-label="Table of options A to D. Scrolls sideways on small screens." tabindex="0" style="--min-w: 42rem">
+              <table class="data-table">
+                <caption class="sr-only">Four restore options and their trade-offs</caption>
+                <thead>
+                  <tr><th scope="col" class="label">Option</th><th scope="col" class="label">What it does</th><th scope="col" class="label">Pro</th><th scope="col" class="label">Con</th></tr>
+                </thead>
+                <tbody>
+                  <tr><th scope="row">A</th><td>Reverts objects, erases later conversation</td><td>Predictable, no partial restores</td><td>Loses reasoning; feels destructive</td></tr>
+                  <tr><th scope="row">B</th><td>Reverts objects, keeps conversation, marks checkpoint “restored”, shows a brief confirmation</td><td>Light; keeps the reasoning trail</td><td>Users may forget a restore after a long gap</td></tr>
+                  <tr><th scope="row">C</th><td>B plus a system message in chat</td><td>Visible in history</td><td>Clutter; long multi-object diffs; hard to scale</td></tr>
+                  <tr><th scope="row">D</th><td>C, with no re-restore</td><td>Avoids state explosion and nested undo</td><td>Disabled buttons with no reason confuse people</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- FIG-10 -->
+          <figure class="fig reveal" id="fig-10">
+            <div class="fig-card">
+              <div class="scroll-x" role="group" aria-label="Option comparison grid. Scrolls sideways on small screens." tabindex="0" style="--min-w: 44rem">
+                <div class="opt" role="img" aria-label="Four columns compare the options. A erases the later conversation. B keeps it and shows a brief toast. C adds a permanent chat message. D adds that message and locks further restores. A is marked Shipped and B is marked My pick.">
+                  <div class="opt-corner label">Option</div>
+                  <div class="opt-head"><span class="opt-letter">A</span><span class="opt-name">Erase the chat</span><span class="chip" data-tone="green">Shipped</span></div>
+                  <div class="opt-head" data-pick><span class="opt-letter">B</span><span class="opt-name">Keep it, mark it</span><span class="chip" data-tone="accent">My pick</span></div>
+                  <div class="opt-head"><span class="opt-letter">C</span><span class="opt-name">Add a chat message</span></div>
+                  <div class="opt-head"><span class="opt-letter">D</span><span class="opt-name">Message, no re-restore</span></div>
+
+                  <div class="opt-rowhead label">Conversation</div>
+                  <div><div class="bars" data-erased><i></i><i></i><i></i></div><span class="note" data-tone="red">erased</span></div>
+                  <div data-pick><div class="bars"><i></i><i></i><i></i></div><span class="note">kept</span></div>
+                  <div><div class="bars"><i></i><i></i><i></i></div><span class="note">kept</span></div>
+                  <div><div class="bars"><i></i><i></i><i></i></div><span class="note">kept</span></div>
+
+                  <div class="opt-rowhead label">Objects</div>
+                  <div><div class="objs"><i></i><i></i><i></i></div><span class="note">reverted</span></div>
+                  <div data-pick><div class="objs"><i></i><i></i><i></i></div><span class="note">reverted</span></div>
+                  <div><div class="objs"><i></i><i></i><i></i></div><span class="note">reverted</span></div>
+                  <div><div class="objs"><i></i><i></i><i></i></div><span class="note">reverted</span></div>
+
+                  <div class="opt-rowhead label">In the chat</div>
+                  <div><span class="note">Nothing added</span></div>
+                  <div data-pick><span class="chip">Restored</span><span class="toast">Restored to checkpoint</span><span class="note">gone on next message</span></div>
+                  <div><div class="sysrow"><b>Checkpoint restored</b><div class="bars"><i></i><i></i><i></i></div></div></div>
+                  <div><div class="sysrow"><b>Checkpoint restored</b><div class="bars"><i></i><i></i><i></i></div></div></div>
+
+                  <div class="opt-rowhead label">Other checkpoints</div>
+                  <div><div class="cp"><span class="cp-act">Restore</span></div></div>
+                  <div data-pick><div class="cp"><span class="cp-act">Restore</span></div></div>
+                  <div><div class="cp"><span class="cp-act">Restore</span></div></div>
+                  <div><div class="cp"><span class="cp-act" data-locked><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>Restore</span></div><span class="note">locked, no reason shown</span></div>
+                </div>
+              </div>
+            </div>
+            <figcaption><span class="label">FIG-10</span><span>What each option leaves behind</span></figcaption>
+          </figure>
+
+          <h3 id="pick">My pick: B</h3>
+          <p>B corrects the objects and keeps the reasoning trail, with a brief confirmation instead of a permanent message. Cline and GitHub Copilot treat restore the same way, as a system action rather than a chat message. The cost: someone may forget a restore happened.</p>
+          <p>I passed on C because I couldn’t word its message across many objects, and the diffs run long. Engineering preferred D for state simplicity. I worried about locked buttons with no reason given.</p>
+
+          <h3 id="shipped">What shipped: A</h3>
+          <p>The team shipped A. For a first version, that was a fair call. It is technically simple and easy to understand, with no partial restores. The dialog warns about the cleared conversation before users commit.</p>
+
+          <h3 id="watch">What I’d watch next</h3>
+          <ul>
+            <li>Whether people lose context. A restore erases the “why did we get here” trail.</li>
+            <li>Whether Restore feels too heavy when someone only wanted to undo object changes.</li>
+          </ul>
+          <p>If either shows up, I will argue for B.</p>
+        </section>
+
+        <section id="learned" aria-labelledby="learned-title">
+          <h2 id="learned-title" class="reveal"><span class="sec-num label">03</span>What I learned</h2>
+          <p>I changed the team’s mind with a working prototype. When my pick (B) lost to the simpler A, the team shipped A and I wrote down what to watch.</p>
+        </section>
+
+      </div>
+    </div>
+
+    <nav class="next-case reveal" data-back aria-label="Back to">
+      <a href="../prompt-to-working-app/">
+        <span class="label">Back to</span>
+        <span class="next-title">From prompt to working app</span>
+        <span class="next-hook">I built a clickable prototype to compare three ways an AI agent can turn a plan into real app objects, and what each one costs.</span>
+        <span class="next-go" aria-hidden="true">←</span>
+      </a>
+    </nav>
+
+  </article>
+</main>
+
+<footer class="site-footer full-width">
+  <div class="bar">
+    <ul class="footer-links" aria-label="Links">
+      <li><a href="https://www.linkedin.com/in/meenakshisundarams/" rel="noopener">LinkedIn</a></li>
+      <li><a href="../resume.pdf">Resume</a></li>
+      <li><a href="https://github.com/meenakshisundaramm06" rel="noopener">GitHub</a></li>
+    </ul>
+    <p class="footer-name">Meenakshi Sundaram</p>
+  </div>
+</footer>
+
+</body>
+</html>
